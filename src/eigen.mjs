@@ -109,7 +109,7 @@ eig.ready = Module.then(module => {
     "ComplexDenseMatrix",
     "Solvers",
     "Decompositions",
-    "QuadProgSolver",
+    // "QuadProgSolver",
     "Random",
   ]);
   classes.forEach(className => {
