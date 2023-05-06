@@ -330,6 +330,10 @@ public:
     }
   }
 
+  void test(const std::string title = "") const {
+    std::cout << title << std::endl;
+  }
+
   static DenseMatrix<T> identity(int m, int n)
   {
     return DenseMatrix<T>(Mat::Identity(m, n));
