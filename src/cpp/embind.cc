@@ -72,7 +72,7 @@ EMSCRIPTEN_BINDINGS(Module)
         .function("hcat", &DDM::hcat, allow_raw_pointers())
         .function("vcat", &DDM::vcat, allow_raw_pointers())
         .function("print", &DDM::print)
-        .function("test", &DDM::print)
+        .function("test", &DDM::test)
         .function("clamp", &DDM::clamp)
         .function("clampSelf", &DDM::clampSelf)
         // Vector ops
