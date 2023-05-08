@@ -3,12 +3,13 @@
 #include <vector>
 
 #include "DenseMatrix.h"
-#include "SparseMatrix.h"
+#include "Grid.h"
+// #include "SparseMatrix.h"
 #include "CareSolver.h"
-#include "Solvers.h"
+// #include "Solvers.h"
 #include "Decompositions.h"
 #ifndef NO_OSQP
-#include "QuadProgSolver.h"
+// #include "QuadProgSolver.h"
 #endif
 #include "Random.h"
 
@@ -17,7 +18,7 @@ using namespace emscripten;
 
 using DDM = DenseMatrix<double>;
 using CDM = DenseMatrix<complex<double>>;
-using SDM = SparseMatrix<double>;
+// using SDM = SparseMatrix<double>;
 
 EMSCRIPTEN_BINDINGS(Module)
 {
@@ -32,6 +33,9 @@ EMSCRIPTEN_BINDINGS(Module)
         .function("imag", select_overload<double(const complex<double> &)>(&imag));
     // emscripten::function("real", select_overload<double(const complex<double> &)>(&real)); // TODO: extract in complex class
     // emscripten::function("imag", select_overload<double(const complex<double> &)>(&imag)); // TODO: extract in complex class
+
+    class_<Grid>("Grid")
+        .constructor<int, int, int, DenseMatrix<bool> &, DenseMatrix<bool> &, DenseMatrix<bool> &>();
 
     // Dense Matrix
     class_<DDM>("Matrix") // TODO: rename
@@ -109,39 +113,39 @@ EMSCRIPTEN_BINDINGS(Module)
         .function("vcat", &CDM::vcat, allow_raw_pointers())
         .function("print", &CDM::print);
 
-    // Triplet
-    class_<TripletVector<double>>("TripletVector")
-        .constructor<int>()
-        .function("add", &TripletVector<double>::add)
-        .function("addDiag", &TripletVector<double>::addDiag)
-        .function("addBlock", &TripletVector<double>::addBlock);
+    // // Triplet
+    // class_<TripletVector<double>>("TripletVector")
+    //     .constructor<int>()
+    //     .function("add", &TripletVector<double>::add)
+    //     .function("addDiag", &TripletVector<double>::addDiag)
+    //     .function("addBlock", &TripletVector<double>::addBlock);
 
-    // Sparse Matrix
-    class_<SDM>("SparseMatrix")
-        .constructor<int, int>()
-        .constructor<int, int, TripletVector<double> *>()
-        .constructor<SDM>()
-        .class_function("identity", &SDM::identity)
-        .class_function("diag", &SDM::diag)
-        .function("transpose", &SDM::transpose)
-        .function("rows", &SDM::rows)
-        .function("cols", &SDM::cols)
-        .function("nonZeros", &SDM::nonZeros)
-        .function("frobeniusNorm", &SDM::frobeniusNorm)
-        .function("block", &SDM::block)
-        .function("toDense", &SDM::toDense)
-        .function("mul", &SDM::mul)
-        .function("mulSelf", &SDM::mulSelf)
-        .function("div", &SDM::div)
-        .function("divSelf", &SDM::divSelf)
-        .function("matAdd", &SDM::matAdd, allow_raw_pointers())
-        .function("matAddSelf", &SDM::matAddSelf, allow_raw_pointers())
-        .function("matSub", &SDM::matSub, allow_raw_pointers())
-        .function("matSubSelf", &SDM::matSubSelf, allow_raw_pointers())
-        .function("matMul", &SDM::matMul, allow_raw_pointers())
-        .function("get", &SDM::get)
-        .function("set", &SDM::set)
-        .function("print", &SDM::print);
+    // // Sparse Matrix
+    // class_<SDM>("SparseMatrix")
+    //     .constructor<int, int>()
+    //     .constructor<int, int, TripletVector<double> *>()
+    //     .constructor<SDM>()
+    //     .class_function("identity", &SDM::identity)
+    //     .class_function("diag", &SDM::diag)
+    //     .function("transpose", &SDM::transpose)
+    //     .function("rows", &SDM::rows)
+    //     .function("cols", &SDM::cols)
+    //     .function("nonZeros", &SDM::nonZeros)
+    //     .function("frobeniusNorm", &SDM::frobeniusNorm)
+    //     .function("block", &SDM::block)
+    //     .function("toDense", &SDM::toDense)
+    //     .function("mul", &SDM::mul)
+    //     .function("mulSelf", &SDM::mulSelf)
+    //     .function("div", &SDM::div)
+    //     .function("divSelf", &SDM::divSelf)
+    //     .function("matAdd", &SDM::matAdd, allow_raw_pointers())
+    //     .function("matAddSelf", &SDM::matAddSelf, allow_raw_pointers())
+    //     .function("matSub", &SDM::matSub, allow_raw_pointers())
+    //     .function("matSubSelf", &SDM::matSubSelf, allow_raw_pointers())
+    //     .function("matMul", &SDM::matMul, allow_raw_pointers())
+    //     .function("get", &SDM::get)
+    //     .function("set", &SDM::set)
+    //     .function("print", &SDM::print);
 
     // .function("matMulSelf", &SDM::matMulSelf, allow_raw_pointers());
     // .function("chol", &SDM::chol, allow_raw_pointers())
@@ -155,24 +159,24 @@ EMSCRIPTEN_BINDINGS(Module)
         .value("NoConvergence", Eigen::ComputationInfo::NoConvergence)
         .value("InvalidInput", Eigen::ComputationInfo::InvalidInput);
 
-    // Solver
-    value_object<Solvers::EigenSolverResult>("EigenSolverResult")
-        .field("info", &Solvers::EigenSolverResult::info)
-        .field("eigenvalues", &Solvers::EigenSolverResult::eigenvalues)
-        .field("eigenvectors", &Solvers::EigenSolverResult::eigenvectors);
+    // // Solver
+    // value_object<Solvers::EigenSolverResult>("EigenSolverResult")
+    //     .field("info", &Solvers::EigenSolverResult::info)
+    //     .field("eigenvalues", &Solvers::EigenSolverResult::eigenvalues)
+    //     .field("eigenvectors", &Solvers::EigenSolverResult::eigenvectors);
 
-    value_object<CareSolver::CareSolverResult>("CareSolverResult")
-        .field("info", &CareSolver::CareSolverResult::info)
-        .field("K", &CareSolver::CareSolverResult::K)
-        .field("S", &CareSolver::CareSolverResult::S);
+    // value_object<CareSolver::CareSolverResult>("CareSolverResult")
+    //     .field("info", &CareSolver::CareSolverResult::info)
+    //     .field("K", &CareSolver::CareSolverResult::K)
+    //     .field("S", &CareSolver::CareSolverResult::S);
 
-    class_<Solvers>("Solvers")
-        .class_function("eigenSolve", &Solvers::eigenSolve)
-        .class_function("careSolve", &Solvers::careSolve)
-        #ifndef NO_OSQP
-        .class_function("quadProgSolve", &Solvers::quadProgSolve)
-        #endif
-        ;
+    // class_<Solvers>("Solvers")
+    //     .class_function("eigenSolve", &Solvers::eigenSolve)
+    //     .class_function("careSolve", &Solvers::careSolve)
+    //     #ifndef NO_OSQP
+    //     .class_function("quadProgSolve", &Solvers::quadProgSolve)
+    //     #endif
+    //     ;
 
     // Decompositions
     value_object<Decompositions::CholeskyResult>("CholeskyResult")
@@ -199,13 +203,13 @@ EMSCRIPTEN_BINDINGS(Module)
         .class_function("qr", &Decompositions::qr)
         .class_function("svd", &Decompositions::svd);
 
-    // Quad prog solver
-    #ifndef NO_OSQP
-    class_<QuadProgSolver>("QuadProgSolver")
-        .class_function("solve", &QuadProgSolver::solve)
-        .class_function("solveSparse", &QuadProgSolver::solveSparse)
-        .class_function("solveBasic", &QuadProgSolver::solveBasic);
-    #endif
+    // // Quad prog solver
+    // #ifndef NO_OSQP
+    // class_<QuadProgSolver>("QuadProgSolver")
+    //     .class_function("solve", &QuadProgSolver::solve)
+    //     .class_function("solveSparse", &QuadProgSolver::solveSparse)
+    //     .class_function("solveBasic", &QuadProgSolver::solveBasic);
+    // #endif
 
     // Random
     class_<Random>("Random")
