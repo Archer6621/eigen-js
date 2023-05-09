@@ -17,6 +17,7 @@ using namespace std;
 using namespace emscripten;
 
 using DDM = DenseMatrix<double>;
+using DDMB = DenseMatrix<bool>;
 using CDM = DenseMatrix<complex<double>>;
 // using SDM = SparseMatrix<double>;
 
@@ -35,7 +36,12 @@ EMSCRIPTEN_BINDINGS(Module)
     // emscripten::function("imag", select_overload<double(const complex<double> &)>(&imag)); // TODO: extract in complex class
 
     class_<Grid>("Grid")
-        .constructor<int, int, int, DenseMatrix<bool> &, DenseMatrix<bool> &, DenseMatrix<bool> &>();
+        .constructor<int, int, int, DDMB &, DDMB &, DDMB &>();
+
+    // Dense Matrix
+    class_<DDMB>("BoolMatrix")
+        .constructor<int, int>()
+        .constructor<const DDMB &>();
 
     // Dense Matrix
     class_<DDM>("Matrix") // TODO: rename
@@ -49,14 +55,14 @@ EMSCRIPTEN_BINDINGS(Module)
         .class_function("fromVector", &DDM::fromVector)
         .function("transpose", &DDM::transpose)
         .function("transposeSelf", &DDM::transposeSelf)
-        .function("inverse", &DDM::inverse)
+        // .function("inverse", &DDM::inverse)
         .function("rows", &DDM::rows)
         .function("cols", &DDM::cols)
         .function("norm", &DDM::norm)
         .function("normSqr", &DDM::normSqr)
         .function("l1Norm", &DDM::l1Norm)
         .function("lInfNorm", &DDM::lInfNorm)
-        .function("rank", &DDM::rank)
+        // .function("rank", &DDM::rank)
         .function("det", &DDM::det)
         .function("sum", &DDM::sum)
         .function("block", &DDM::block)
@@ -94,12 +100,12 @@ EMSCRIPTEN_BINDINGS(Module)
         .class_function("constant", &CDM::constant)
         .class_function("random", &CDM::random)
         .function("transpose", &CDM::transpose)
-        .function("inverse", &CDM::inverse)
+        // .function("inverse", &CDM::inverse)
         .function("conjugate", &CDM::conjugate)
         .function("rows", &CDM::rows)
         .function("cols", &CDM::cols)
         .function("norm", &CDM::norm)
-        .function("rank", &CDM::rank)
+        // .function("rank", &CDM::rank)
         .function("sum", &CDM::sum)
         .function("block", select_overload<CDM(int, int, int, int) const>(&CDM::block))
         .function("mul", &CDM::mul)

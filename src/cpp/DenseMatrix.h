@@ -127,11 +127,11 @@ public:
     return data.template lpNorm<Eigen::Infinity>();
   }
 
-  double rank() const
-  {
-    Eigen::ColPivHouseholderQR<Mat> qr(data);
-    return qr.rank();
-  }
+  // double rank() const
+  // {
+  //   Eigen::ColPivHouseholderQR<Mat> qr(data);
+  //   return qr.rank();
+  // }
 
   double det() const
   {
@@ -278,10 +278,10 @@ public:
     return *this;
   }
 
-  DenseMatrix<T> inverse() const
-  {
-    return DenseMatrix<T>(data.inverse());
-  }
+  // DenseMatrix<T> inverse() const
+  // {
+  //   return DenseMatrix<T>(data.inverse());
+  // }
 
   DenseMatrix<T> conjugate() const
   {
