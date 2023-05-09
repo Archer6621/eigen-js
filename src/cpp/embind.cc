@@ -1,6 +1,7 @@
 #include <emscripten/bind.h>
 #include <Eigen/Dense>
 #include <vector>
+// #include <map>
 
 #include "DenseMatrix.h"
 #include "Grid.h"
@@ -26,6 +27,9 @@ EMSCRIPTEN_BINDINGS(Module)
     // Double vector
     emscripten::register_vector<double>("Vector");
     emscripten::register_vector<vector<double>>("Vector2d");
+    
+
+    // emscripten::register_map<string, DDMB &>("AdjMap");
 
     // Complex numbers
     class_<complex<double>>("Complex")
@@ -36,7 +40,7 @@ EMSCRIPTEN_BINDINGS(Module)
     // emscripten::function("imag", select_overload<double(const complex<double> &)>(&imag)); // TODO: extract in complex class
 
     class_<Grid>("Grid")
-        .constructor<int, int, int, DDMB &, DDMB &, DDMB &>();
+        .constructor<int, int, int, DDMB &, DDMB &, DDMB &, DDMB &, DDMB &, DDMB &>();
 
     // Dense Matrix
     class_<DDMB>("BoolMatrix")
