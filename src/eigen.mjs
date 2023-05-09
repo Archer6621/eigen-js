@@ -12,14 +12,14 @@ const Module = eigen_gen({
  * Add helper functions TODO: extract in file
  */
 function addHelpers(eig) {
-  /**
-   * Add fromTriplets factory to triplets
-   */
-  eig.SparseMatrix.fromTriplets = function (m, n, array) {
-    let triplets = new eig.TripletVector(array.length)
-    array.forEach(sub => triplets.add(...sub))
-    return new eig.SparseMatrix(m, n, triplets);
-  }
+  // /**
+  //  * Add fromTriplets factory to triplets
+  //  */
+  // eig.SparseMatrix.fromTriplets = function (m, n, array) {
+  //   let triplets = new eig.TripletVector(array.length)
+  //   array.forEach(sub => triplets.add(...sub))
+  //   return new eig.SparseMatrix(m, n, triplets);
+  // }
 
   /**
    * Re-define matrix constructor
