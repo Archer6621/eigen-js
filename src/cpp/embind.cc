@@ -41,8 +41,13 @@ EMSCRIPTEN_BINDINGS(Module)
     // Dense Matrix
     class_<DDMB>("BoolMatrix")
         .constructor<int, int>()
-        .constructor<const DDMB &>();
-
+        .constructor<const DDMB &>()
+        .function("block", &DDMB::block)
+        .function("setBlock", &DDMB::setBlock)
+        .function("get", &DDMB::get)
+        .function("set", &DDMB::set)
+        .function("vGet", &DDMB::vGet)
+        .function("vSet", &DDMB::vSet);
     // Dense Matrix
     class_<DDM>("Matrix") // TODO: rename
         .constructor<int, int>()
