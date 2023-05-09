@@ -104,17 +104,22 @@ eig.ready = Module.then(module => {
     "Vector2d",
     "Complex",
     "Matrix",
-    "SparseMatrix",
-    "TripletVector",
+    // "SparseMatrix",
+    // "TripletVector",
     "ComplexDenseMatrix",
-    "Solvers",
+    // "Solvers",
     "Decompositions",
+    // "DenseMatrixOther",
     // "QuadProgSolver",
     "Random",
     "Grid"
   ]);
   classes.forEach(className => {
-    eig[className] = GC.initClass(classes, module[className])
+    if (className in module) {
+      eig[className] = GC.initClass(classes, module[className])
+    } else {
+      console.warn(`Attempted to add GC to non-existing class bind: ${className}`)
+    }
   })
   addHelpers(eig);
 })
