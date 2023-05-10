@@ -44,7 +44,8 @@ EMSCRIPTEN_BINDINGS(Module)
 
     class_<Grid>("Grid")
         .constructor<int, int, int, DDMB &, DDMB &, DDMB &, DDMB &, DDMB &, DDMB &>()
-        .function("print", &Grid::print);
+        .function("print", &Grid::print)
+        .function("propagate", &Grid::propagate);
 
     // Dense Matrix
     class_<DDMB>("BoolMatrix")

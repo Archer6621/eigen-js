@@ -59,6 +59,37 @@ public:
             }
         }
     }
+
+
+    Tensor<bool, 1> getCol(int x, int y) {
+        return choices.chip(x, 0).chip(y, 0);
+    }
+
+          // Should do prop from ox/oy to nx/ny
+    void propagate(int ox, int oy, int nx, int ny, char dir) {
+        auto allowed = getCol(ox, oy);
+        Tensor<bool, 1> rem = leafMask && allowed;
+        Tensor<bool, 1> res(tileChoices);
+        res.setConstant(false); // Might be redundant??
+
+        for (int i = 0; i < 8; i++) {
+          if (rem(i)) {
+            Tensor<bool, 1> tileAdj = adjacencies.at(dir).chip(i, 0);
+            for (int j = 0; j < 8; j++) {
+              if (tileAdj(j)) {
+                res(j) = true;
+                break;
+              }
+            }
+          }
+        }
+
+        // Do some other crap
+
+
+        // Set the tile choices
+        getCol(nx, ny) = getCol(nx, ny) && res;
+      };
 };
 
 #endif // GRID_H
