@@ -18,7 +18,7 @@ class Grid
     //   using Mat = Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic>;
 private:
     Tensor<bool, 3> choices;
-    std::map<char, Tensor<bool, 2>> adjacencies;
+    std::map<int, Tensor<bool, 2>> adjacencies;
     Tensor<bool, 2> childMask;
     Tensor<bool, 1> leafMask;
     int width;
@@ -29,10 +29,10 @@ public:
     Grid(int w, int h, int c, DenseMatrix<bool> &adjN, DenseMatrix<bool> &adjE, DenseMatrix<bool> &adjS, DenseMatrix<bool> &adjW, DenseMatrix<bool> &CM, DenseMatrix<bool> &LM)
     {
         choices = Tensor<bool, 3>(w, h, c).setConstant(true);
-        adjacencies['N'] = TensorCast(adjN.data, c, c);
-        adjacencies['E'] = TensorCast(adjE.data, c, c);
-        adjacencies['S'] = TensorCast(adjS.data, c, c);
-        adjacencies['W'] = TensorCast(adjW.data, c, c);
+        adjacencies[0] = TensorCast(adjN.data, c, c);
+        adjacencies[1] = TensorCast(adjE.data, c, c);
+        adjacencies[2] = TensorCast(adjS.data, c, c);
+        adjacencies[3] = TensorCast(adjW.data, c, c);
         childMask = TensorCast(CM.data, c, c);
         leafMask = TensorCast(LM.data, c);
         width = w;
@@ -44,7 +44,7 @@ public:
     {
     // std::array<std::string, 3> texts = ;
     // // ^ An array of 3 elements with the type std::string
-        for(auto dir : {'N', 'E', 'S', 'W'}) { 
+        for(auto dir : {0, 1, 2, 3}) { 
             printf("%c\n", dir);
             for (int i = 0; i < this->tileChoices; i++)
             {
@@ -66,16 +66,16 @@ public:
     }
 
           // Should do prop from ox/oy to nx/ny
-    void propagate(int ox, int oy, int nx, int ny, char dir) {
-        auto allowed = getCol(ox, oy);
+    void propagate(int ox, int oy, int nx, int ny, int dir) {
+        Tensor<bool, 1> allowed = getCol(ox, oy);
         Tensor<bool, 1> rem = leafMask && allowed;
         Tensor<bool, 1> res(tileChoices);
         res.setConstant(false); // Might be redundant??
 
-        for (int i = 0; i < 8; i++) {
+        for (int i = 0; i < this->tileChoices; i++) {
           if (rem(i)) {
             Tensor<bool, 1> tileAdj = adjacencies.at(dir).chip(i, 0);
-            for (int j = 0; j < 8; j++) {
+            for (int j = 0; j < this->tileChoices; j++) {
               if (tileAdj(j)) {
                 res(j) = true;
                 break;
