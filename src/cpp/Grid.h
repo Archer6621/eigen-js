@@ -8,6 +8,7 @@
 #include "DenseMatrix.h"
 #include "Conversion.h"
 #include <map>
+#include <initializer_list>
 
 using namespace Eigen;
 using namespace std;
@@ -41,16 +42,21 @@ public:
 
     void print() const
     {
-        for (int i = 0; i < this->width; i++)
-        {
-            printf(i == 0 ? "[[" : " [");
-            for (int j = 0; j < this->height; j++)
+    // std::array<std::string, 3> texts = ;
+    // // ^ An array of 3 elements with the type std::string
+        for(auto dir : {'N', 'E', 'S', 'W'}) { 
+            printf("%c\n", dir);
+            for (int i = 0; i < this->tileChoices; i++)
             {
-                printf("%d", this->adjacencies.at('N')(i,j));
-                printf(j < this->height - 1 ? ", " : "");
+                printf(i == 0 ? "[[" : " [");
+                for (int j = 0; j < this->tileChoices; j++)
+                {
+                    printf("%d", this->adjacencies.at(dir)(i,j));
+                    printf(j < this->tileChoices - 1 ? ", " : "");
+                }
+                printf((i < this->tileChoices - 1 ? "]" : "]]"));
+                printf("\n");
             }
-            printf((i < this->width - 1 ? "]" : "]]"));
-            printf("\n");
         }
     }
 };
