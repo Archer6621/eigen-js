@@ -9,7 +9,7 @@ template <typename T>
 class DenseMatrix
 {
   using Mat = Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic>;
-  using Vector2d = std::vector<std::vector<T>>;
+  using Vector2d = std::vector<std::vector<double>>;
 
 protected:
   void assertVector(DenseMatrix &M) const
@@ -374,7 +374,7 @@ public:
     {
       assert(v[i].size() == n && "All the rows must have the same size");
       for (size_t j = 0; j < n; j++)
-        mat(i, j) = v[i][j];
+        mat(i, j) = static_cast<T>(v[i][j]);
     }
     return mat;
   }

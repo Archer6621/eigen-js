@@ -25,8 +25,11 @@ using CDM = DenseMatrix<complex<double>>;
 EMSCRIPTEN_BINDINGS(Module)
 {
     // Double vector
-    emscripten::register_vector<double>("Vector");
-    emscripten::register_vector<vector<double>>("Vector2d");
+    // emscripten::register_vector<double>("Vector");
+    // emscripten::register_vector<vector<double>>("Vector2d");
+    emscripten::register_vector<double>("BoolVector");
+    // emscripten::register_vector<vector<bool>>("BoolVector2d");
+
     
 
     // emscripten::register_map<string, DDMB &>("AdjMap");
@@ -53,6 +56,7 @@ EMSCRIPTEN_BINDINGS(Module)
         .function("set", &DDMB::set)
         .function("vGet", &DDMB::vGet)
         .function("vSet", &DDMB::vSet);
+        
     // Dense Matrix
     class_<DDM>("Matrix") // TODO: rename
         .constructor<int, int>()

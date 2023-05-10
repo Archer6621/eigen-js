@@ -98,8 +98,6 @@ eig.ready = Module.then((module) => {
   const classes = new Set([
     "Vector",
     "Vector2d",
-    "BoolVector",
-    "BoolVector2d",
     "Complex",
     "Matrix",
     "BoolMatrix",
