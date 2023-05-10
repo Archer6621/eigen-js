@@ -67,29 +67,29 @@ public:
 
           // Should do prop from ox/oy to nx/ny
     void propagate(int ox, int oy, int nx, int ny, int dir) {
-        Tensor<bool, 2> bla = choices.chip(nx, 0);
-        // Tensor<bool, 1> allowed = getCol(ox, oy);
-        // Tensor<bool, 1> rem = leafMask && allowed;
-        // Tensor<bool, 1> res(tileChoices);
-        // res.setConstant(false); // Might be redundant??
+        // Tensor<bool, 2> bla = choices.chip(nx, 0);
+        Tensor<bool, 1> allowed = getCol(ox, oy);
+        Tensor<bool, 1> rem = leafMask && allowed;
+        Tensor<bool, 1> res(tileChoices);
+        res.setConstant(false); // Might be redundant??
 
-        // for (int i = 0; i < this->tileChoices; i++) {
-        //   if (rem(i)) {
-        //     Tensor<bool, 1> tileAdj = adjacencies.at(dir).chip(i, 0);
-        //     for (int j = 0; j < this->tileChoices; j++) {
-        //       if (tileAdj(j)) {
-        //         res(j) = true;
-        //         break;
-        //       }
-        //     }
-        //   }
-        // }
+        for (int i = 0; i < this->tileChoices; i++) {
+          if (rem(i)) {
+            Tensor<bool, 1> tileAdj = adjacencies.at(dir).chip(i, 0);
+            for (int j = 0; j < this->tileChoices; j++) {
+              if (tileAdj(j)) {
+                res(j) = true;
+                break;
+              }
+            }
+          }
+        }
 
-        // // Do some other crap
+        // Do some other crap
 
 
-        // // Set the tile choices
-        // getCol(nx, ny) = getCol(nx, ny) && res;
+        // Set the tile choices
+        getCol(nx, ny) = getCol(nx, ny) && res;
       };
 };
 
