@@ -67,7 +67,7 @@ public:
 
           // Should do prop from ox/oy to nx/ny
     void propagate(int ox, int oy, int nx, int ny, int dir) {
-        getCol(nx, ny);
+        choices.chip(nx, 0);
         // Tensor<bool, 1> allowed = getCol(ox, oy);
         // Tensor<bool, 1> rem = leafMask && allowed;
         // Tensor<bool, 1> res(tileChoices);
