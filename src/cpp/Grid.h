@@ -43,22 +43,27 @@ public:
 
     void print() const
     {
-    // std::array<std::string, 3> texts = ;
+      // this->choices.imag
+
+    std::cout << this->choices << std::endl;
+    // std::array<std::string, 3> texts =
+    
+     ;
     // // ^ An array of 3 elements with the type std::string
-        for(auto dir : {0, 1, 2, 3}) { 
-            printf("%c\n", dir);
-            for (int i = 0; i < this->tileChoices; i++)
-            {
-                printf(i == 0 ? "[[" : " [");
-                for (int j = 0; j < this->tileChoices; j++)
-                {
-                    printf("%d", this->adjacencies.at(dir)(i,j));
-                    printf(j < this->tileChoices - 1 ? ", " : "");
-                }
-                printf((i < this->tileChoices - 1 ? "]" : "]]"));
-                printf("\n");
-            }
-        }
+        // for(auto dir : {0, 1, 2, 3}) { 
+        //     printf("%c\n", dir);
+        //     for (int i = 0; i < this->tileChoices; i++)
+        //     {
+        //         printf(i == 0 ? "[[" : " [");
+        //         for (int j = 0; j < this->tileChoices; j++)
+        //         {
+        //             printf("%d", this->adjacencies.at(dir)(i,j));
+        //             printf(j < this->tileChoices - 1 ? ", " : "");
+        //         }
+        //         printf((i < this->tileChoices - 1 ? "]" : "]]"));
+        //         printf("\n");
+        //     }
+        // }
     }
 
 
@@ -94,9 +99,15 @@ public:
       };
 
       auto getChoices() {
-        std::vector<uint8_t> output = { 1, 0, 1 };
-        emscripten::val view{ emscripten::typed_memory_view(output.size(), output.data()) };
-        auto result = emscripten::val::global("Uint8Array").new_(output.size());
+
+
+        // std::vector<uint8_t> output = { 1, 0, 1 };
+
+        Tensor<uint8_t, 3> casted = this->choices.cast<uint8_t>();
+        auto size = this->width * this->height * this->tileChoices;
+        
+        emscripten::val view{ emscripten::typed_memory_view(size, casted.data()) };
+        auto result = emscripten::val::global("Uint8Array").new_(size);
         result.call<void>("set", view);
 
         return result;
