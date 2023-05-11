@@ -1,6 +1,7 @@
 #ifndef GRID_H
 #define GRID_H
 
+#include <emscripten/bind.h>
 #include <iostream>
 #include <vector>
 #include <string>
@@ -91,6 +92,16 @@ public:
         // Set the tile choices
         getCol(nx, ny) = getCol(nx, ny) && res;
       };
+
+      auto getChoices() {
+        std::vector<uint8_t> output = { 1, 0, 1 };
+        emscripten::val view{ emscripten::typed_memory_view(output.size(), output.data()) };
+        auto result = emscripten::val::global("Uint8Array").new_(output.size());
+        result.call<void>("set", view);
+
+        return result;
+      }
+
 };
 
 #endif // GRID_H
