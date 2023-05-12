@@ -88,7 +88,7 @@ public:
 
     void setCol(int x, int y, std::vector<double> newCol) {
       Tensor<bool, 1> col = getCol(x, y);
-      std::cout << "BEFORE" << std::endl;
+      std::cout << "BEFORE: " << x << "," << y << std::endl;
       std::cout << col << std::endl;
       for (int i = 0; i < tileChoices; i++) {
         this->choices(x, y, i) = newCol[i] != 0.0;
@@ -128,7 +128,7 @@ public:
         getCol(nx, ny) = post; 
         Tensor<bool, 0> diff = (pre ^ post).any();
 
-        std::cout << "DIFF" << std::endl;
+        std::cout << "DIFF: " << nx << "," << ny << std::endl;
         std::cout << "pre" << std::endl;
         std::cout << pre << std::endl;
         std::cout << "post" << std::endl;
