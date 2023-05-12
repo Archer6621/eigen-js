@@ -86,7 +86,12 @@ public:
 // }
 // const post = and(pre, allowedAdjacencies);
 
-
+    void setCol(int x, int y, std::vector<double> newCol) {
+      Tensor<bool, 1> col = getCol(x, y);
+      for (int i = 0; i < tileChoices; i++) {
+        col(i) = newCol[i] != 0.0;
+      }
+    }
 
     bool propagate(int ox, int oy, int nx, int ny, int dir) {
         Tensor<bool, 1> pre = getCol(nx, ny);
