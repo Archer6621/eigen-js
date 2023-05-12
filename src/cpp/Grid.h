@@ -29,7 +29,7 @@ private:
 public:
     Grid(int w, int h, int c, DenseMatrix<bool> &adjN, DenseMatrix<bool> &adjE, DenseMatrix<bool> &adjS, DenseMatrix<bool> &adjW, DenseMatrix<bool> &CM, DenseMatrix<bool> &LM)
     {
-        choices = Tensor<bool, 3>(w, h, c).setConstant(true);
+        choices = Tensor<bool, 3>(c, w, h).setConstant(true);
         adjacencies[0] = TensorCast(adjN.data, c, c);
         adjacencies[1] = TensorCast(adjE.data, c, c);
         adjacencies[2] = TensorCast(adjS.data, c, c);
@@ -68,9 +68,17 @@ public:
 
 
     auto getCol(int x, int y) {
-        return choices.chip(x, 0).chip(y, 0);
+        return choices.chip(x, 1).chip(y, 2);
     }
 
+    // auto getColJS(int x, int y) {
+    //     Tensor<bool, 1> col = getCol(x, y);
+    //     Tensor<uint8_t, 1> casted = col.cast<uint8_t>();        
+    //     emscripten::val view{ emscripten::typed_memory_view(this->tileChoices, casted.data()) };
+    //     auto result = emscripten::val::global("Uint8Array").new_(this->tileChoices);
+    //     result.call<void>("set", view);
+    //     return result;
+    // }
 
 
 // const pre = squeeze(this.choices.subset(index(nx, ny, this.ALL)));
@@ -91,7 +99,7 @@ public:
       std::cout << "BEFORE: " << x << "," << y << std::endl;
       std::cout << col << std::endl;
       for (int i = 0; i < tileChoices; i++) {
-        this->choices(x, y, i) = newCol[i] != 0.0;
+        this->choices(i, x, y) = newCol[i] != 0.0;
       }
       std::cout << "AFTER" << std::endl;
       std::cout << getCol(x, y) << std::endl;
