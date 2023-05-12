@@ -72,8 +72,8 @@ public:
     }
 
           // Should do prop from ox/oy to nx/ny
-    void propagate(int ox, int oy, int nx, int ny, int dir) {
-        // Tensor<bool, 2> bla = choices.chip(nx, 0);
+    bool propagate(int ox, int oy, int nx, int ny, int dir) {
+        Tensor<bool, 1> pre = getCol(nx, ny);
         Tensor<bool, 1> allowed = getCol(ox, oy);
         Tensor<bool, 1> rem = leafMask && allowed;
         Tensor<bool, 1> res(tileChoices);
@@ -95,9 +95,14 @@ public:
 
 
         // Set the tile choices
-        getCol(nx, ny) = getCol(nx, ny) && res;
+        Tensor<bool, 1> post = getCol(nx, ny) && res;
+        getCol(nx, ny) = post; 
+        Tensor<bool, 0> diff = (pre ^ post).any();
+        // Return the difference
+        return diff();
       };
 
+      
       auto getChoices() {
 
 
