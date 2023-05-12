@@ -29,7 +29,7 @@ private:
 public:
     Grid(int w, int h, int c, DenseMatrix<bool> &adjN, DenseMatrix<bool> &adjE, DenseMatrix<bool> &adjS, DenseMatrix<bool> &adjW, DenseMatrix<bool> &CM, DenseMatrix<bool> &LM)
     {
-        choices = Tensor<bool, 3>(c, w, h).setConstant(true);
+        choices = Tensor<bool, 3>(c, h, w).setConstant(true);
         adjacencies[0] = TensorCast(adjN.data, c, c);
         adjacencies[1] = TensorCast(adjE.data, c, c);
         adjacencies[2] = TensorCast(adjS.data, c, c);
@@ -68,7 +68,7 @@ public:
 
 
     auto getCol(int x, int y) {
-        return choices.chip(x, 1).chip(y, 1);
+        return choices.chip(x, 2).chip(y, 1);
     }
 
     // auto getColJS(int x, int y) {
@@ -99,7 +99,7 @@ public:
       std::cout << "BEFORE: " << x << "," << y << std::endl;
       std::cout << col << std::endl;
       for (int i = 0; i < tileChoices; i++) {
-        this->choices(i, x, y) = newCol[i] != 0.0;
+        this->choices(i, y, x) = newCol[i] != 0.0;
       }
       std::cout << "AFTER" << std::endl;
       std::cout << getCol(x, y) << std::endl;
