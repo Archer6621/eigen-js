@@ -68,7 +68,7 @@ public:
 
 
     auto getCol(int x, int y) {
-        return choices.chip(x, 1).chip(y, 2);
+        return choices.chip(x, 1).chip(y, 1);
     }
 
     // auto getColJS(int x, int y) {
