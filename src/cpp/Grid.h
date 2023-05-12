@@ -71,22 +71,41 @@ public:
         return choices.chip(x, 0).chip(y, 0);
     }
 
+
+
+// const pre = squeeze(this.choices.subset(index(nx, ny, this.ALL)));
+// const cur = squeeze(this.choices.subset(index(p.x, p.y, this.ALL)));
+// let allowedAdjacencies = zeros(this.gridChoices);
+// for (const idx of this.indices(cur._data)) {
+//   if (this.LM.get([idx])) {
+//     let adjacencies = squeeze(
+//       this.adjaug.get(k).subset(index(idx, this.ALL))
+//     );
+//     allowedAdjacencies = add(allowedAdjacencies, adjacencies);
+//   }
+// }
+// const post = and(pre, allowedAdjacencies);
+
+
+
     bool propagate(int ox, int oy, int nx, int ny, int dir) {
         Tensor<bool, 1> pre = getCol(nx, ny);
-        Tensor<bool, 1> allowed = getCol(ox, oy);
-        Tensor<bool, 1> rem = leafMask && allowed;
-        Tensor<bool, 1> res(tileChoices);
-        res.setConstant(false); // Might be redundant??
+        Tensor<bool, 1> cur = getCol(ox, oy);
+        // Tensor<bool, 1> rem = leafMask && allowed;
+        Tensor<bool, 1> allowedAdjacencies(tileChoices);
+        // res; // Might be redundant??
 
         for (int i = 0; i < this->tileChoices; i++) {
-          if (rem(i)) {
-            Tensor<bool, 1> tileAdj = adjacencies.at(dir).chip(i, 0);
-            for (int j = 0; j < this->tileChoices; j++) {
-              if (tileAdj(j)) {
-                res(j) = true;
-                break;
-              }
-            }
+          if (cur(i) && this->leafMask(i)) {
+            Tensor<bool, 1> tileAdj = adjacencies.at(dir).chip(i, 1);
+            allowedAdjacencies = allowedAdjacencies || tileAdj;
+
+            // for (int j = 0; j < this->tileChoices; j++) {
+            //   if (tileAdj(j)) {
+            //     res(j) = true;
+            //     break;
+            //   }
+            // }
           }
         }
 
@@ -94,12 +113,14 @@ public:
 
 
         // Set the tile choices
-        Tensor<bool, 1> post = pre && res;
+        Tensor<bool, 1> post = pre && allowedAdjacencies;
         getCol(nx, ny) = post; 
         Tensor<bool, 0> diff = (pre ^ post).any();
 
-        std::cout << "diff" << std::endl;
+        std::cout << "DIFF" << std::endl;
+        std::cout << "pre" << std::endl;
         std::cout << pre << std::endl;
+        std::cout << "post" << std::endl;
         std::cout << post << std::endl;
 
 
