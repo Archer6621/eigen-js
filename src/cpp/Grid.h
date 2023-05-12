@@ -67,7 +67,7 @@ public:
     }
 
 
-    Tensor<bool, 1> getCol(int x, int y) {
+    auto getCol(int x, int y) {
         return choices.chip(x, 0).chip(y, 0);
     }
 
