@@ -93,6 +93,7 @@ public:
         Tensor<bool, 1> cur = getCol(ox, oy);
         // Tensor<bool, 1> rem = leafMask && allowed;
         Tensor<bool, 1> allowedAdjacencies(tileChoices);
+        allowedAdjacencies.setConstant(false);
         // res; // Might be redundant??
 
         for (int i = 0; i < this->tileChoices; i++) {
