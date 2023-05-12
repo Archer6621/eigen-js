@@ -91,7 +91,7 @@ public:
       std::cout << "BEFORE" << std::endl;
       std::cout << col << std::endl;
       for (int i = 0; i < tileChoices; i++) {
-        col(i) = newCol[i] != 0.0;
+        this->choices(x, y, i) = newCol[i] != 0.0;
       }
       std::cout << "AFTER" << std::endl;
       std::cout << getCol(x, y) << std::endl;
