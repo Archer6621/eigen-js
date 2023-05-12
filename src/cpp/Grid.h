@@ -88,9 +88,14 @@ public:
 
     void setCol(int x, int y, std::vector<double> newCol) {
       Tensor<bool, 1> col = getCol(x, y);
+      std::cout << "BEFORE" << std::endl;
+      std::cout << col << std::endl;
       for (int i = 0; i < tileChoices; i++) {
         col(i) = newCol[i] != 0.0;
       }
+      std::cout << "AFTER" << std::endl;
+      std::cout << getCol(x, y) << std::endl;
+
     }
 
     bool propagate(int ox, int oy, int nx, int ny, int dir) {
