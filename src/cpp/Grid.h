@@ -71,7 +71,6 @@ public:
         return choices.chip(x, 0).chip(y, 0);
     }
 
-          // Should do prop from ox/oy to nx/ny
     bool propagate(int ox, int oy, int nx, int ny, int dir) {
         Tensor<bool, 1> pre = getCol(nx, ny);
         Tensor<bool, 1> allowed = getCol(ox, oy);
@@ -95,9 +94,15 @@ public:
 
 
         // Set the tile choices
-        Tensor<bool, 1> post = getCol(nx, ny) && res;
+        Tensor<bool, 1> post = pre && res;
         getCol(nx, ny) = post; 
         Tensor<bool, 0> diff = (pre ^ post).any();
+
+        std::cout << "diff" << std::endl;
+        std::cout << pre << std::endl;
+        std::cout << post << std::endl;
+
+
         // Return the difference
         return diff();
       };
