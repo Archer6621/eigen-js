@@ -47,7 +47,8 @@ EMSCRIPTEN_BINDINGS(Module)
         .function("print", &Grid::print)
         .function("setCol", &Grid::setCol)
         .function("propagate", &Grid::propagate)
-        .function("getChoices", &Grid::getChoices);
+        .function("getChoices", &Grid::getChoices)
+        .function("setChoices", &Grid::setChoices);
 
     // Dense Matrix
     class_<DDMB>("BoolMatrix")

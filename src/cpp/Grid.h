@@ -173,6 +173,12 @@ public:
         return result;
       }
 
+
+      void setChoices(const emscripten::val &typedArray) {
+          auto vec = emscripten::convertJSArrayToNumberVector<uint8_t>(typedArray);
+          this->choices = Eigen::TensorMap<Tensor<uint8_t, 3>>(vec.data(), this->tileChoices, this->height, this->width).cast<bool>();
+      }
+
 };
 
 #endif // GRID_H
