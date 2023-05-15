@@ -128,11 +128,20 @@ public:
           }
         }
 
-        // Do some other crap
-
-
-        // Set the tile choices
         Tensor<bool, 1> post = pre && allowedAdjacencies;
+
+
+        // Prune empty parents
+        for (int i = 0; i < this->tileChoices; i++) {
+          if (post(i)) {
+            Tensor<bool, 0> anyChildren = (this->childMask.chip(i, 0) && post).any();
+            if (!this->leafMask(i) && !anyChildren()) {
+              post(i) = false;
+            }
+          }
+        }
+        
+        // Set the tile choices
         getCol(nx, ny) = post; 
         Tensor<bool, 0> diff = (pre ^ post).any();
 
@@ -148,6 +157,7 @@ public:
       };
 
       
+      // This is not amazingly fast, but good enough for now
       auto getChoices() {
 
 
