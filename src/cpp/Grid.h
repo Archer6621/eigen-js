@@ -21,13 +21,14 @@ private:
     Tensor<bool, 3> choices;
     std::map<int, Tensor<bool, 2>> adjacencies;
     Tensor<bool, 2> childMask;
+    Tensor<bool, 2> subtreeMask;
     Tensor<bool, 1> leafMask;
     int width;
     int height;
     int tileChoices;
 
 public:
-    Grid(int w, int h, int c, DenseMatrix<bool> &adjN, DenseMatrix<bool> &adjE, DenseMatrix<bool> &adjS, DenseMatrix<bool> &adjW, DenseMatrix<bool> &CM, DenseMatrix<bool> &LM)
+    Grid(int w, int h, int c, DenseMatrix<bool> &adjN, DenseMatrix<bool> &adjE, DenseMatrix<bool> &adjS, DenseMatrix<bool> &adjW, DenseMatrix<bool> &CM, DenseMatrix<bool> &SM, DenseMatrix<bool> &LM)
     {
         choices = Tensor<bool, 3>(c, h, w).setConstant(true);
         adjacencies[0] = TensorCast(adjN.data, c, c);
@@ -35,6 +36,7 @@ public:
         adjacencies[2] = TensorCast(adjS.data, c, c);
         adjacencies[3] = TensorCast(adjW.data, c, c);
         childMask = TensorCast(CM.data, c, c);
+        this->subtreeMask = TensorCast(CM.data, c, c);
         leafMask = TensorCast(LM.data, c);
         width = w;
         height = h;
@@ -112,13 +114,13 @@ public:
         // Tensor<bool, 1> rem = leafMask && allowed;
         Tensor<bool, 1> allowedAdjacencies(tileChoices);
         allowedAdjacencies.setConstant(false);
-        // res; // Might be redundant??
 
         for (int i = 0; i < this->tileChoices; i++) {
           if (cur(i) && this->leafMask(i)) {
             Tensor<bool, 1> tileAdj = adjacencies.at(dir).chip(i, 1);
             allowedAdjacencies = allowedAdjacencies || tileAdj;
 
+            // Potentially faster due to early abort
             // for (int j = 0; j < this->tileChoices; j++) {
             //   if (tileAdj(j)) {
             //     res(j) = true;
@@ -129,7 +131,6 @@ public:
         }
 
         Tensor<bool, 1> post = pre && allowedAdjacencies;
-
 
         // Prune empty parents
         for (int i = 0; i < this->tileChoices; i++) {
@@ -145,24 +146,29 @@ public:
         getCol(nx, ny) = post; 
         Tensor<bool, 0> diff = (pre ^ post).any();
 
-        // std::cout << "DIFF: " << nx << "," << ny << std::endl;
-        // std::cout << "pre" << std::endl;
-        // std::cout << pre << std::endl;
-        // std::cout << "post" << std::endl;
-        // std::cout << post << std::endl;
+        // Return the difference
+        return diff();
+      };
 
+
+      bool depropagate(int ox, int oy, int nx, int ny, int dir, int choice) {
+        Tensor<bool, 1> pre = getCol(nx, ny);
+        Tensor<bool, 1> cur = getCol(ox, oy);
+
+        // Reset subtree
+        Tensor<bool, 1> post = pre || this->subtreeMask.chip(choice, 0);
+
+        // Set the tile choices
+        getCol(nx, ny) = post; 
+        Tensor<bool, 0> diff = (pre ^ post).any();
 
         // Return the difference
         return diff();
       };
 
-      
+
       // This is not amazingly fast, but good enough for now
       auto getChoices() {
-
-
-        // std::vector<uint8_t> output = { 1, 0, 1 };
-
         Tensor<uint8_t, 3> casted = this->choices.cast<uint8_t>();
         auto size = this->width * this->height * this->tileChoices;
         

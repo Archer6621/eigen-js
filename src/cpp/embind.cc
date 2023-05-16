@@ -43,10 +43,11 @@ EMSCRIPTEN_BINDINGS(Module)
     // emscripten::function("imag", select_overload<double(const complex<double> &)>(&imag)); // TODO: extract in complex class
 
     class_<Grid>("Grid")
-        .constructor<int, int, int, DDMB &, DDMB &, DDMB &, DDMB &, DDMB &, DDMB &>()
+        .constructor<int, int, int, DDMB &, DDMB &, DDMB &, DDMB &, DDMB &, DDMB &, DDMB &>()
         .function("print", &Grid::print)
         .function("setCol", &Grid::setCol)
         .function("propagate", &Grid::propagate)
+        .function("depropagate", &Grid::depropagate)
         .function("getChoices", &Grid::getChoices)
         .function("setChoices", &Grid::setChoices);
 
