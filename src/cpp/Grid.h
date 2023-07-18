@@ -19,7 +19,7 @@ class Grid
     //   using Mat = Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic>;
 private:
     Tensor<bool, 3> choices;
-    std::map<int, Tensor<bool, 2>> adjacencies;
+    std::map<int, std::map<int, Tensor<bool, 2>>> adjacencies;
     Tensor<bool, 2> childMask;
     Tensor<bool, 2> subtreeMask;
     Tensor<bool, 1> leafMask;
@@ -28,13 +28,9 @@ private:
     int tileChoices;
 
 public:
-    Grid(int w, int h, int c, DenseMatrix<bool> &adjN, DenseMatrix<bool> &adjE, DenseMatrix<bool> &adjS, DenseMatrix<bool> &adjW, DenseMatrix<bool> &CM, DenseMatrix<bool> &SM, DenseMatrix<bool> &LM)
+    Grid(int w, int h, int c,  DenseMatrix<bool> &CM, DenseMatrix<bool> &SM, DenseMatrix<bool> &LM)
     {
         choices = Tensor<bool, 3>(c, h, w).setConstant(true);
-        adjacencies[0] = TensorCast(adjN.data, c, c);
-        adjacencies[1] = TensorCast(adjE.data, c, c);
-        adjacencies[2] = TensorCast(adjS.data, c, c);
-        adjacencies[3] = TensorCast(adjW.data, c, c);
         childMask = TensorCast(CM.data, c, c);
         this->subtreeMask = TensorCast(CM.data, c, c);
         leafMask = TensorCast(LM.data, c);
@@ -66,6 +62,13 @@ public:
         //         printf("\n");
         //     }
         // }
+    }
+
+    void setAdjacencyData(int index, DenseMatrix<bool> &adjN, DenseMatrix<bool> &adjE, DenseMatrix<bool> &adjS, DenseMatrix<bool> &adjW) {
+        adjacencies[index][0] = TensorCast(adjN.data, tileChoices, tileChoices);
+        adjacencies[index][1] = TensorCast(adjE.data, tileChoices, tileChoices);
+        adjacencies[index][2] = TensorCast(adjS.data, tileChoices, tileChoices);
+        adjacencies[index][3] = TensorCast(adjW.data, tileChoices, tileChoices);
     }
 
 
@@ -108,7 +111,7 @@ public:
 
     }
 
-    bool propagate(int ox, int oy, int nx, int ny, int dir) {
+    bool propagate(int ox, int oy, int nx, int ny, int dir, int metaIndex) {
         Tensor<bool, 1> pre = getCol(nx, ny);
         Tensor<bool, 1> cur = getCol(ox, oy);
         // Tensor<bool, 1> rem = leafMask && allowed;
@@ -117,7 +120,7 @@ public:
 
         for (int i = 0; i < this->tileChoices; i++) {
           if (cur(i) && this->leafMask(i)) {
-            Tensor<bool, 1> tileAdj = adjacencies.at(dir).chip(i, 1);
+            Tensor<bool, 1> tileAdj = adjacencies.at(metaIndex).at(dir).chip(i, 1);
             allowedAdjacencies = allowedAdjacencies || tileAdj;
 
             // Potentially faster due to early abort
