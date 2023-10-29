@@ -1,0 +1,1 @@
+emcc -D NO_OSQP -I lib/eigen  -Isrc -s DISABLE_EXCEPTION_CATCHING=0 -s ASSERTIONS=1 -O3 -msimd128 -s ALLOW_MEMORY_GROWTH=1 -s MODULARIZE=1 --bind -o build/eigen_gen.js src/cpp/embind.cc
